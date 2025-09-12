@@ -2,9 +2,7 @@ import prisma from "../src/database";
 import app from "../src/index";
 import supertest from "supertest";
 
-const api = supertest(app);
-
-
+const api = supertest(app); 
 
 beforeEach(async () => {
     await prisma.ticket.deleteMany()
