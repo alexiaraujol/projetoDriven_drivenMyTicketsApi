@@ -1,11 +1,21 @@
-import { CreateEventData } from "repositories/events-repository";
-import prisma from "../../src/database";
 
-export async function createNewEvent(data: CreateEventData){
+import prisma from "../../src/database";
+import { faker } from "@faker-js/faker"
+
+export async function createNewEventBody() {
+    return {
+        name: faker.company.name(),
+        date: faker.date.future().toISOString()
+    }
+
+}
+
+
+export async function createNewEvent() {
     return await prisma.event.create({
-            data: {
-                name: data.name,
-                date: data.date
-            }
-        })
+        data: {
+            name: faker.company.name(),
+            date: faker.date.future()
+        }
+    })
 }

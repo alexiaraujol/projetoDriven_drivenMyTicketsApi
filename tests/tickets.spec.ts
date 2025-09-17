@@ -1,6 +1,7 @@
 import prisma from "../src/database";
 import app from "../src/index";
 import supertest from "supertest";
+import { createNewTicket, createNewTicketBody } from "./factories/tickets-factory";
 
 
 const api = supertest(app);
@@ -15,22 +16,8 @@ describe("POST /tickets", () => {
 
     it("create a new tickets", async () => {
 
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + 7);
-
-        const { id } = await prisma.event.create({
-            data: {
-                name: "driven",
-                date: futureDate.toISOString()
-            }
-        })
-
-        const { status, body } = await api.post("/tickets").send({
-            code: "2541494168796519",
-            owner: "Alexia",
-            eventId: id
-        })
-
+        const data = await createNewTicket();
+        const { status, body } = await api.post("/tickets").send(data)
         expect(status).toBe(201);
 
 
@@ -41,31 +28,25 @@ describe("POST /tickets", () => {
 
 describe("GET /tickets", () => {
 
-    // it("should return an especific ticket", async () => {
+    it("should return an especific ticket", async () => {
 
-    //     const { id } = await prisma.event.create({
-    //         data: {
-    //             name: "driven",
-    //             date: "2025-09-13T00:00:00.000Z"
-    //         }
-    //     })
+        const newTicket = await createNewTicket();
+        const postResponse = await api.post("/tickets").send(newTicket);
+        expect(postResponse.status).toBe(201);
 
-    //     const postTicket = await api.post("/tickets").send({
-    //         code: "2541494168796519",
-    //         owner: "Alexia",
-    //         eventId: id
-    //     })
+        const ticketId = postResponse.body.id;
+        const { status, body } = await api.get(`/tickets/${ticketId}`);
+        expect(status).toBe(200);
+
+        expect(postResponse.body).toMatchObject({
+            code: postResponse.body.code,
+            owner: postResponse.body.owner,
+            eventId: postResponse.body.eventId
+        });
 
 
+    })
 
-    //     const { status, body } = await api.get(`/tickets/${postTicket.body}`);
-    //     expect(status).toBe(200);
-
-    //     expect(body).toMatchObject({
-    //         "eventId": id
-    //     })
-
-    // })
 
 })
 
