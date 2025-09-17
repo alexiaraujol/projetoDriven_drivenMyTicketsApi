@@ -8,9 +8,9 @@
     "start": "npm run migration:run && npm run seed && node dist/src/index.js",
     "dev": "ts-node-dev src/server.ts",
     "migration:run": "prisma migrate deploy",
-    "test": "dotenv -e .env.test jest",
-    "test:migration:run" :"dotenv -e .env.test prisma migrate deploy"
-  
+    "test:load-envs": "dotenv -e .env.test",
+    "test": "npm run test:load-envs jest",
+    "test:migration:run": "npm run test:load-envs prisma migrate deploy"
   },
   "keywords": [],
   "author": "",

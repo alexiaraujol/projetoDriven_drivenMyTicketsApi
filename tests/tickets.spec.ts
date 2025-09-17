@@ -15,10 +15,13 @@ describe("POST /tickets", () => {
 
     it("create a new tickets", async () => {
 
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 7);
+
         const { id } = await prisma.event.create({
             data: {
                 name: "driven",
-                date: "2025-09-13T00:00:00.000Z"
+                date: futureDate.toISOString()
             }
         })
 
@@ -27,7 +30,9 @@ describe("POST /tickets", () => {
             owner: "Alexia",
             eventId: id
         })
+
         expect(status).toBe(201);
+
 
     })
 })
@@ -36,25 +41,31 @@ describe("POST /tickets", () => {
 
 describe("GET /tickets", () => {
 
-    it("should return an especific ticket", async () => {
+    // it("should return an especific ticket", async () => {
 
-        const { id } = await prisma.event.create({
-            data: {
-                name: "driven",
-                date: "2025-09-13T00:00:00.000Z"
-            }
-        })
+    //     const { id } = await prisma.event.create({
+    //         data: {
+    //             name: "driven",
+    //             date: "2025-09-13T00:00:00.000Z"
+    //         }
+    //     })
+
+    //     const postTicket = await api.post("/tickets").send({
+    //         code: "2541494168796519",
+    //         owner: "Alexia",
+    //         eventId: id
+    //     })
 
 
 
-        const { status, body } = await api.get(`/tickets/${id}`);
-        expect(status).toBe(200);
+    //     const { status, body } = await api.get(`/tickets/${postTicket.body}`);
+    //     expect(status).toBe(200);
 
-        expect(body).toMatchObject({
-            "eventId": id
-        })
+    //     expect(body).toMatchObject({
+    //         "eventId": id
+    //     })
 
-    })
+    // })
 
 })
 

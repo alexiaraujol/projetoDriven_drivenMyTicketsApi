@@ -1,6 +1,7 @@
 import prisma from "../src/database";
 import app from "../src/index";
 import supertest from "supertest";
+import { createNewEvent } from "./factories/events-factory";
 
 const api = supertest(app); 
 
@@ -26,18 +27,9 @@ describe("GET /events", () => {
 
     it("should return all event", async () => {
 
-        await prisma.event.create({
-            data: {
-                name: "driven",
-                date: "2025-09-10T00:00:00.000Z"
-            }
-        })
-        await prisma.event.create({
-            data: {
-                name: "Samba",
-                date: "2025-09-10T00:00:00.000Z"
-            }
-        })
+        await createNewEvent("driven", "2025-09-10");
+        await createNewEvent("Samba", "2025-09-10");
+
 
         const { status, body } = await api.get("/events")
 
@@ -57,12 +49,7 @@ describe("GET /events", () => {
 
     it("should return an specific event", async () => {
 
-        const { id } = await prisma.event.create({
-            data: {
-                name: "driven",
-                date: "2025-09-10T00:00:00.000Z"
-            }
-        })
+        const { id } = await createNewEvent("driven", "2025-09-10T00:00:00.000Z");
 
         const { status, body } = await api.get(`/events/${id}`)
         expect(status).toBe(200);
