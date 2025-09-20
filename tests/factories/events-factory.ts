@@ -1,4 +1,5 @@
 
+
 import prisma from "../../src/database";
 import { faker } from "@faker-js/faker"
 

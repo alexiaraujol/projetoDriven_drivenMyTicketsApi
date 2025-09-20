@@ -2,8 +2,9 @@ import prisma from "../src/database";
 import app from "../src/index";
 import supertest from "supertest";
 import { createNewEvent, createNewEventBody } from "./factories/events-factory";
+import { faker } from "@faker-js/faker";
 
-const api = supertest(app); 
+const api = supertest(app);
 
 beforeEach(async () => {
     await prisma.ticket.deleteMany()
@@ -18,7 +19,18 @@ describe("POST /events", () => {
         const { status, body } = await api.post("/events").send(data)
         expect(status).toBe(201);
 
-    }) 
+    })
+
+    it("should return status 409", async () => {
+
+        const data = await createNewEventBody();
+        const res1 = await api.post("/events").send(data);
+        expect(res1.status).toBe(201);
+        const res2 = await api.post("/events").send(data);
+        expect(res2.status).toBe(409);
+    })
+
+
 })
 
 describe("GET /events", () => {
@@ -57,8 +69,49 @@ describe("GET /events", () => {
 
     })
 
+    it("should return status code 404 when contact not found", async () => {
+
+        const { status } = await api.get("/events/1")
+
+        expect(status).toBe(404);
+
+    })
 })
 
 
+describe("PUT /event/:id", () => {
 
+    it("should return status 200 when updateData", async () => {
+        const event = await createNewEvent();
+        const oldDate = event.date;
+
+        const newDate = faker.date.future();
+        const newBody = { date: newDate.toISOString() };
+
+        const res = await api.put(`/events/${event.id}`).send(newBody);
+
+        expect(res.status).toBe(200);
+        expect(new Date(res.body.date)).toEqual(newDate);
+        expect(res.body.id).toEqual(event.id);
+        expect(new Date(res.body.date)).not.toEqual(oldDate);
+
+    });
+})
+
+describe("DELETE /events/:id", () => {
+
+    it("should return status 200 when delete event", async () => {
+  
+    const event = await createNewEvent();
+    console.log("o id desse evento é ",event.id)
+   
+    const res = await api.delete(`/events/${event.id}`);
+
+ 
+    expect(res.status).toBe(204);
+
+
+  });
+
+})
 
