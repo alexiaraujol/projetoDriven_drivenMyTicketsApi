@@ -68,32 +68,31 @@ describe("GET /events", () => {
         })
 
     })
+    
+    it("should return 404 when not found the event", async () => {
 
-    it("should return status code 404 when contact not found", async () => {
-
-        const { status } = await api.get("/events/1")
-
+        const {status} = await api.get("/events/1");
         expect(status).toBe(404);
 
     })
+
 })
 
 
 describe("PUT /event/:id", () => {
 
     it("should return status 200 when updateData", async () => {
+
         const event = await createNewEvent();
-        const oldDate = event.date;
-
         const newDate = faker.date.future();
-        const newBody = { date: newDate.toISOString() };
-
-        const res = await api.put(`/events/${event.id}`).send(newBody);
+        const res = await api.put(`/events/${event.id}`).send({
+            date: newDate,
+            name: event.name
+        });
 
         expect(res.status).toBe(200);
         expect(new Date(res.body.date)).toEqual(newDate);
         expect(res.body.id).toEqual(event.id);
-        expect(new Date(res.body.date)).not.toEqual(oldDate);
 
     });
 })
@@ -101,17 +100,17 @@ describe("PUT /event/:id", () => {
 describe("DELETE /events/:id", () => {
 
     it("should return status 200 when delete event", async () => {
-  
-    const event = await createNewEvent();
-    console.log("o id desse evento é ",event.id)
-   
-    const res = await api.delete(`/events/${event.id}`);
 
- 
-    expect(res.status).toBe(204);
+        const event = await createNewEvent();
 
 
-  });
+        const res = await api.delete(`/events/${event.id}`);
+
+
+        expect(res.status).toBe(204);
+
+
+    });
 
 })
 

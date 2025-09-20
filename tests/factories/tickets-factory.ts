@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { createNewEvent } from "./events-factory";
+import prisma from "database";
 
 
 export async function createNewTicket() {
@@ -28,3 +29,6 @@ export async function createNewTicketBody() {
 
 
 }
+
+
+
